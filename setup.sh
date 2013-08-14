@@ -38,17 +38,15 @@ ls -laf grunt-init-carnaby/node_modules
 echo
 echo 'Insalling grunt-carnaby plugin...'
 echo
-cd grunt-carnaby &&
-npm install &&
-grunt &&
+cd grunt-carnaby && npm install && grunt &&
 
 # Install grunt-init-carnaby
 echo
 echo 'Installing grunt-init-carnaby template...'
 echo
-cd ../grunt-init-carnaby &&
-npm install &&
-grunt &&
+cd ../grunt-init-carnaby && npm install && grunt &&
+
+cd ..; subl meta-carnaby.sublime-project
 
 echo
 echo 'Done.'
