@@ -8,7 +8,7 @@ rm -rf grunt-carnaby grunt-init-carnaby &&
 git clone git@github.com:elgrancalavera/grunt-carnaby.git &&
 git clone git@github.com:elgrancalavera/grunt-init-carnaby.git &&
 
-# Symlik the init template
+# Symlink the grunt-init-carnaby template
 mkdir -p ~/.grunt-init/
 rm -f ~/.grunt-init/carnaby
 from=$(pwd)'/grunt-init-carnaby'
@@ -22,7 +22,7 @@ echo
 ln -s $from $to
 ls -laf ~/.grunt-init
 
-# Symlink grunt-carnaby gruntplugin
+# Symlink the grunt-carnaby gruntplugin
 mkdir -p grunt-init-carnaby/node_modules
 from=$(pwd)'/grunt-carnaby'
 to=$(pwd)'/grunt-init-carnaby/node_modules'
@@ -34,7 +34,7 @@ echo
 ln -s $from $to
 ls -laf grunt-init-carnaby/node_modules
 
-# Installing grunt-carnaby
+# Install grunt-carnaby
 echo
 echo 'Insalling grunt-carnaby plugin...'
 echo
@@ -42,7 +42,7 @@ cd grunt-carnaby &&
 npm install &&
 grunt &&
 
-# Installing grunt-init-carnaby
+# Install grunt-init-carnaby
 echo
 echo 'Installing grunt-init-carnaby template...'
 echo
