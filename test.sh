@@ -14,7 +14,6 @@ done
 if [[ $install ]]; then
   npm install && bower install &&
   cd ..
-
   # Symlink the grunt-carnaby gruntplugin
   mkdir -p grunt-init-carnaby/node_modules
   from=$(pwd)'/grunt-carnaby'
@@ -26,7 +25,6 @@ if [[ $install ]]; then
   echo
   ln -s $from $to
   ls -laf a-carnaby-project/node_modules
-
   cd a-carnaby-project
   grunt server
 fi
