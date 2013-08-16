@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Bring the code
+# Bring in the code
 echo
 echo 'Cloning git repos...'
 echo
