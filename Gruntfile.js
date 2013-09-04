@@ -1,6 +1,48 @@
 /*global module:false*/
 module.exports = function(grunt) {
+
+  var shellOpts = function (opts) {
+    return grunt.util._.extend({
+        stdout: true,
+        stderr: true,
+        failOnError: true
+    }, opts || {});
+  };
+
   grunt.initConfig({
+    shell: {
+      clone: {
+        options: shellOpts(),
+        command: [
+          'git clone git@github.com:elgrancalavera/grunt-carnaby.git',
+          'git clone git@github.com:elgrancalavera/grunt-init-carnaby.git'
+        ].join('&&')
+      },
+      install_carnaby: {
+        options: shellOpts({
+          execOptions: {
+            cwd: 'grunt-carnaby'
+          }
+        }),
+        command: [
+          'npm install',
+          'bower install',
+          'grunt'
+        ].join('&&')
+      },
+      install_init_carnaby: {
+        options: shellOpts({
+          execOptions: {
+            cwd: 'grunt-init-carnaby'
+          }
+        }),
+        command: [
+          'npm install',
+          'bower install',
+          'grunt'
+        ].join('&&')
+      }
+    },
     jshint: {
       options: {
         curly: true,
@@ -25,8 +67,10 @@ module.exports = function(grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       }
-    }
+    },
+    clean: ['grunt-carnaby', 'grunt-init-carnaby']
   });
+
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-  grunt.registerTask('default', ['jshint', 'watch']);
+  grunt.registerTask('default', ['jshint']);
 };
