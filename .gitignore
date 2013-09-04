@@ -3,3 +3,4 @@ grunt-init-carnaby
 a-carnaby-project
 *.sublime-workspace
 .DS_Store
+node_modules

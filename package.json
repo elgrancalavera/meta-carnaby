@@ -1,0 +1,23 @@
+{
+  "name": "meta-carnaby",
+  "version": "0.0.0",
+  "description": "## Setup ```bash ./setup.sh ```",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/elgrancalavera/meta-carnaby.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "gitHead": "c062e9be8b9de171a0f89d2b27c031d6a3d6732a",
+  "readmeFilename": "readme.md",
+  "devDependencies": {
+    "matchdep": "~0.1.2",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-watch": "~0.5.3"
+  }
+}
