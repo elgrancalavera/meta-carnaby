@@ -1,5 +1,13 @@
 /*global module:false*/
+var path = require('path');
+
 module.exports = function(grunt) {
+
+  //--------------------------------------------------------------------------
+  //
+  // Shell helpers
+  //
+  //--------------------------------------------------------------------------
 
   var shellOpts = function (opts) {
     return grunt.util._.extend({
@@ -9,14 +17,59 @@ module.exports = function(grunt) {
     }, opts || {});
   };
 
+  var cmdjoint = ' && ';
+  var initCarnaby = path.resolve(process.env.HOME, '.grunt-init/carnaby');
+
+  var symlinks = [
+    [
+      path.resolve('./grunt-init-carnaby'),
+      initCarnaby
+    ],
+    [
+      path.resolve('./grunt-carnaby'),
+      path.resolve('./grunt-init-carnaby/node_modules/grunt-carnaby')
+    ]
+  ].reduce(function (commands, ln) {
+
+    commands.push(['ln -s'].concat(ln).join(' '));
+    return commands;
+
+  }, []).join(cmdjoint);
+
+
+  //--------------------------------------------------------------------------
+  //
+  // Grunt
+  //
+  //--------------------------------------------------------------------------
+
   grunt.initConfig({
     shell: {
-      clone: {
+
+      //----------------------------------
+      //
+      // Install
+      //
+      //----------------------------------
+
+      install_rm: {
+        options: shellOpts(),
+        command: ['rm -f', initCarnaby].join(' ')
+      },
+      install_clone: {
         options: shellOpts(),
         command: [
           'git clone git@github.com:elgrancalavera/grunt-carnaby.git',
           'git clone git@github.com:elgrancalavera/grunt-init-carnaby.git'
-        ].join('&&')
+        ].join(cmdjoint)
+      },
+      install_mkdir: {
+        options: shellOpts(),
+        command: 'mkdir -p grunt-init-carnaby/node_modules'
+      },
+      install_ln: {
+        options: shellOpts(),
+        command: symlinks
       },
       install_carnaby: {
         options: shellOpts({
@@ -28,7 +81,7 @@ module.exports = function(grunt) {
           'npm install',
           'bower install',
           'grunt'
-        ].join('&&')
+        ].join(cmdjoint)
       },
       install_init_carnaby: {
         options: shellOpts({
@@ -40,7 +93,7 @@ module.exports = function(grunt) {
           'npm install',
           'bower install',
           'grunt'
-        ].join('&&')
+        ].join(cmdjoint)
       }
     },
     jshint: {
@@ -68,9 +121,22 @@ module.exports = function(grunt) {
         tasks: ['jshint:gruntfile']
       }
     },
-    clean: ['grunt-carnaby', 'grunt-init-carnaby']
+    clean: {
+      install: ['grunt-carnaby', 'grunt-init-carnaby']
+    }
   });
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+  grunt.registerTask('install', [
+    'clean:install',
+    'shell:install_rm',
+    'shell:install_clone',
+    'shell:install_mkdir',
+    'shell:install_ln',
+    'shell:install_carnaby',
+    'shell:install_init_carnaby'
+  ]);
+
   grunt.registerTask('default', ['jshint']);
 };
