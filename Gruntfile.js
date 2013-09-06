@@ -96,6 +96,16 @@ module.exports = function(grunt) {
         ].join(cmdjoint)
       }
     },
+    copy: {
+      init: {
+        files: [{
+          expand: true,
+          cwd: 'grunt-init-carnaby/root/app/common/scripts/common/helpers',
+          dest: 'grunt-carnaby/tmp/common/scripts/common/helpers',
+          src: '**'
+        }]
+      }
+    },
     jshint: {
       options: {
         curly: true,
