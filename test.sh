@@ -28,5 +28,4 @@ if [[ $install ]]; then
   ls -laf a-carnaby-project/node_modules
 
   cd a-carnaby-project
-  grunt server
 fi
