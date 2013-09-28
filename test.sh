@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 rm -rf test && mkdir test &&
 cd test && grunt-init carnaby -d -v &&
-subl test.sublime-project
 
 while getopts ":i" opt ; do
   case $opt in
@@ -28,4 +27,8 @@ if [[ $install ]]; then
   ls -laf test/node_modules
 
   cd test
+  grunt carnaby:new-project
+  grunt
+  grunt carnaby:start
+
 fi

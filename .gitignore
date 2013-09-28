@@ -1,6 +1,6 @@
 grunt-carnaby
 grunt-init-carnaby
-a-carnaby-project
+test
 *.sublime-workspace
 .DS_Store
 node_modules
