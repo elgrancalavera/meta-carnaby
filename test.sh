@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-rm -rf a-carnaby-project && mkdir a-carnaby-project &&
-cd a-carnaby-project && grunt-init carnaby -d -v &&
-subl a-carnaby-project.sublime-project
+rm -rf test && mkdir test &&
+cd test && grunt-init carnaby -d -v &&
+subl test.sublime-project
 
 while getopts ":i" opt ; do
   case $opt in
@@ -18,14 +18,14 @@ if [[ $install ]]; then
   # Symlink the grunt-carnaby gruntplugin
   mkdir -p grunt-init-carnaby/node_modules
   from=$(pwd)'/grunt-carnaby'
-  to=$(pwd)'/a-carnaby-project/node_modules'
+  to=$(pwd)'/test/node_modules'
   echo
   echo 'Symlinking grunt-carnaby gruntplugin...'
   echo 'From: ' $from
   echo 'To:   ' $to
   echo
   ln -s $from $to
-  ls -laf a-carnaby-project/node_modules
+  ls -laf test/node_modules
 
-  cd a-carnaby-project
+  cd test
 fi
