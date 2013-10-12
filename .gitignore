@@ -4,3 +4,4 @@ test
 *.sublime-workspace
 .DS_Store
 node_modules
+local.json
