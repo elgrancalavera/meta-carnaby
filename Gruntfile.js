@@ -239,6 +239,12 @@ module.exports = function(grunt) {
     'shell:gup_grunt_init_carnaby'
   ]);
 
+  grunt.registerTask('gp', [
+    'shell:gp_meta_carnaby',
+    'shell:gp_grunt_carnaby',
+    'shell:gp_grunt_init_carnaby'
+  ]);
+
   grunt.registerTask('default', ['jshint']);
   grunt.registerTask('start', ['default', 'watch']);
 };
