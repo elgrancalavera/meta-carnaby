@@ -74,8 +74,11 @@ module.exports = function(grunt) {
     };
   };
 
+
   var gst = git_cmd('git status');
   var gup = git_cmd(['git fetch', 'git rebase'].join(cmdjoint));
+  // see http://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
+  // see http://stackoverflow.com/questions/2657935/checking-for-a-dirty-index-or-untracked-files-with-git/2659808#2659808
   var gca = git_cmd('git commit -a');
   var gcA = git_cmd(['git add -A', 'git commit'].join(cmdjoint));
 
