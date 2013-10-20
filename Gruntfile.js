@@ -3,6 +3,8 @@ var path = require('path');
 
 module.exports = function(grunt) {
 
+  var _ = grunt.util._;
+
   //--------------------------------------------------------------------------
   //
   // Shell helpers
@@ -10,11 +12,28 @@ module.exports = function(grunt) {
   //--------------------------------------------------------------------------
 
   var shellOpts = function (opts) {
-    return grunt.util._.extend({
+    return _.extend({
         stdout: true,
         stderr: true,
         failOnError: true
     }, opts || {});
+  };
+
+  var cwdOpts = function (cwd) {
+    return function (opts) {
+      opts = opts || {};
+      opts.execOptions = { cwd: cwd };
+      return shellOpts(opts);
+    };
+  };
+
+  var grunt_init_carnaby_shellOpts = cwdOpts('grunt-init-carnaby');
+  var grunt_carnaby_shellOpts = cwdOpts('grunt-carnaby');
+
+  var opts = {
+    'meta-carnaby': shellOpts,
+    'grunt-init-carnaby': grunt_init_carnaby_shellOpts,
+    'grunt-carnaby': grunt_carnaby_shellOpts
   };
 
   var cmdjoint = ' && ';
@@ -36,6 +55,29 @@ module.exports = function(grunt) {
 
   }, []).join(cmdjoint);
 
+  //--------------------------------------------------------------------------
+  //
+  // Git helpers
+  //
+  //--------------------------------------------------------------------------
+
+  var git = function (project, command) {
+    return {
+      options: opts[project](),
+      command: command
+    };
+  };
+
+  var git_cmd = function (command) {
+    return function (project) {
+      return git(project, command);
+    };
+  };
+
+  var gst = git_cmd('git status');
+  var gup = git_cmd(['git fetch', 'git rebase'].join(cmdjoint));
+  var gca = git_cmd('git commit -a');
+  var gcA = git_cmd(['git add -A', 'git commit'].join(cmdjoint));
 
   //--------------------------------------------------------------------------
   //
@@ -44,7 +86,34 @@ module.exports = function(grunt) {
   //--------------------------------------------------------------------------
 
   grunt.initConfig({
+
     shell: {
+
+      //----------------------------------
+      //
+      // Git
+      //
+      //----------------------------------
+
+      // status
+      gst_meta_carnaby: gst('meta-carnaby'),
+      gst_grunt_carnaby: gst('grunt-carnaby'),
+      gst_grunt_init_carnaby: gst('grunt-init-carnaby'),
+
+      // commit -a
+      gca_meta_carnaby: gca('meta-carnaby'),
+      gca_grunt_carnaby: gca('grunt-carnaby'),
+      gca_grunt_init_carnaby: gca('grunt-init-carnaby'),
+
+      // add -A && commit
+      gcA_meta_carnaby: gcA('meta-carnaby'),
+      gcA_grunt_carnaby: gcA('grunt-carnaby'),
+      gcA_grunt_init_carnaby: gcA('grunt-init-carnaby'),
+
+      // fetch && rebase
+      gup_meta_carnaby: gup('meta-carnaby'),
+      gup_grunt_carnaby: gup('grunt-carnaby'),
+      gup_grunt_init_carnaby: gup('grunt-init-carnaby'),
 
       //----------------------------------
       //
@@ -56,6 +125,7 @@ module.exports = function(grunt) {
         options: shellOpts(),
         command: ['rm -f', initCarnaby].join(' ')
       },
+
       install_clone: {
         options: shellOpts(),
         command: [
@@ -63,32 +133,28 @@ module.exports = function(grunt) {
           'git clone git@github.com:elgrancalavera/grunt-init-carnaby.git'
         ].join(cmdjoint)
       },
+
       install_mkdir: {
         options: shellOpts(),
         command: 'mkdir -p grunt-init-carnaby/node_modules'
       },
+
       install_ln: {
         options: shellOpts(),
         command: symlinks
       },
+
       install_carnaby: {
-        options: shellOpts({
-          execOptions: {
-            cwd: 'grunt-carnaby'
-          }
-        }),
+        options: grunt_carnaby_shellOpts(),
         command: [
           'npm install',
           'bower install',
           'grunt'
         ].join(cmdjoint)
       },
-      install_init_carnaby: {
-        options: shellOpts({
-          execOptions: {
-            cwd: 'grunt-init-carnaby'
-          }
-        }),
+
+      install_grunt_init_carnaby: {
+        options: grunt_init_carnaby_shellOpts(),
         command: [
           'npm install',
           'bower install',
@@ -96,16 +162,7 @@ module.exports = function(grunt) {
         ].join(cmdjoint)
       }
     },
-    copy: {
-      init: {
-        files: [{
-          expand: true,
-          cwd: 'grunt-init-carnaby/root/app/common/scripts/common/helpers',
-          dest: 'grunt-carnaby/tmp/common/scripts/common/helpers',
-          src: '**'
-        }]
-      }
-    },
+
     jshint: {
       options: {
         curly: true,
@@ -145,8 +202,33 @@ module.exports = function(grunt) {
     'shell:install_mkdir',
     'shell:install_ln',
     'shell:install_carnaby',
-    'shell:install_init_carnaby'
+    'shell:install_grunt_init_carnaby'
+  ]);
+
+  grunt.registerTask('gst', [
+    'shell:gst_meta_carnaby',
+    'shell:gst_grunt_carnaby',
+    'shell:gst_grunt_init_carnaby'
+  ]);
+
+  grunt.registerTask('gca', [
+    'shell:gca_meta_carnaby',
+    'shell:gca_grunt_carnaby',
+    'shell:gca_grunt_init_carnaby'
+  ]);
+
+  grunt.registerTask('gcA', [
+    'shell:gcA_meta_carnaby',
+    'shell:gcA_grunt_carnaby',
+    'shell:gcA_grunt_init_carnaby'
+  ]);
+
+  grunt.registerTask('gup', [
+    'shell:gup_meta_carnaby',
+    'shell:gup_grunt_carnaby',
+    'shell:gup_grunt_init_carnaby'
   ]);
 
   grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('start', ['default', 'watch']);
 };
