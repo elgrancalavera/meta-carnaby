@@ -77,6 +77,7 @@ module.exports = function(grunt) {
 
   var gst = git_cmd('git status');
   var gup = git_cmd('git fetch && git rebase');
+  var gp = git_cmd('git push');
   // see http://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
   // see http://stackoverflow.com/questions/2657935/checking-for-a-dirty-index-or-untracked-files-with-git/2659808#2659808
   var gca = git_cmd('git diff-files --quiet || git commit -a');
@@ -118,6 +119,11 @@ module.exports = function(grunt) {
       gup_meta_carnaby: gup('meta-carnaby'),
       gup_grunt_carnaby: gup('grunt-carnaby'),
       gup_grunt_init_carnaby: gup('grunt-init-carnaby'),
+
+      // git push
+      gp_meta_carnaby: gp('meta-carnaby'),
+      gp_grunt_carnaby: gp('grunt-carnaby'),
+      gp_grunt_init_carnaby: gp('grunt-init-carnaby'),
 
       //----------------------------------
       //
