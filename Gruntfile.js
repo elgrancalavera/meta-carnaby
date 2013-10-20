@@ -55,32 +55,6 @@ module.exports = function(grunt) {
 
   }, []).join(cmdjoint);
 
-  var command = function (cmd) {
-    var _cmd = function () {
-      return cmd;
-    };
-    _cmd.or = function (or_cmd) {
-      return command(cmd + ' || ' + or_cmd);
-    };
-    _cmd.and = function (and_cmd) {
-      return command(cmd + ' && ' + and_cmd);
-    };
-    _cmd.nest = function () {
-      return command('( ' + cmd + ' )');
-    };
-    _cmd.run = function () {
-      return cmd;
-    };
-    return _cmd;
-  };
-
-  // var git_diff_files = command('git diff-files --quiet');
-  // var git_add_dot_commit = command('git add .').and('git commit');
-  // var git_add_if_any = command(git_diff_files.run()).or(git_add_dot_commit.nest().run());
-
-  // console.log(git_add_if_any.run());
-
-
   //--------------------------------------------------------------------------
   //
   // Git helpers
@@ -102,7 +76,7 @@ module.exports = function(grunt) {
 
 
   var gst = git_cmd('git status');
-  var gup = git_cmd(command('git fetch').and('git rebase').run());
+  var gup = git_cmd('git fetch && git rebase');
   // see http://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
   // see http://stackoverflow.com/questions/2657935/checking-for-a-dirty-index-or-untracked-files-with-git/2659808#2659808
   var gca = git_cmd('git diff-files --quiet || git commit -a');
