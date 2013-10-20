@@ -3,7 +3,33 @@ var path = require('path');
 
 module.exports = function(grunt) {
 
+  //--------------------------------------------------------------------------
+  //
+  // Setup
+  //
+  //--------------------------------------------------------------------------
+
   var _ = grunt.util._;
+  var carnabypkg = grunt.file.readJSON('grunt-carnaby/package.json');
+  var gitignore = [
+    '.DS_Store',
+    '.preflight',
+    '.sass-cache',
+    '.symlinks',
+    '.tmp',
+    'bower_components',
+    'local.json',
+    'node_modules',
+    'targets',
+    'tmp',
+  ];
+
+  var carnaby_gitignore = gitignore.concat([
+    '.carnaby',
+    'app',
+  ]);
+
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   //--------------------------------------------------------------------------
   //
@@ -74,14 +100,10 @@ module.exports = function(grunt) {
     };
   };
 
-
   var gst = git_cmd('git status');
   var gup = git_cmd('git fetch && git rebase');
   var gp = git_cmd('git push');
-  // see http://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
-  // see http://stackoverflow.com/questions/2657935/checking-for-a-dirty-index-or-untracked-files-with-git/2659808#2659808
   var gca = git_cmd('git diff-files --quiet || git commit -a');
-  // see http://stackoverflow.com/questions/3801321/git-list-only-untracked-files-also-custom-commands/3801554#3801554
   var gcA = git_cmd('test -z "$(git ls-files --others --exclude-standard)" || ( git add -A && git commit )');
 
   //--------------------------------------------------------------------------
@@ -91,6 +113,27 @@ module.exports = function(grunt) {
   //--------------------------------------------------------------------------
 
   grunt.initConfig({
+
+    extend: {
+
+      //----------------------------------
+      //
+      // let grunt-carnaby itself determine
+      // grunt-init-carnaby dependencies.
+      //
+      //----------------------------------
+
+      devDependencies: {
+        options: {
+          defaults: _.extend(carnabypkg.devDependencies, {
+            'grunt-carnaby': '~' + carnabypkg.version
+          })
+        },
+        files: {
+          'grunt-init-carnaby/dev-dependencies.json': []
+        }
+      }
+    },
 
     shell: {
 
@@ -200,10 +243,45 @@ module.exports = function(grunt) {
     },
     clean: {
       install: ['grunt-carnaby', 'grunt-init-carnaby']
+    },
+    copy: {
+      oddBits: {
+        files: [{
+          expand: true,
+          cwd: 'grunt-carnaby',
+          dest: 'grunt-init-carnaby/root',
+          src: [
+            '.bowerrc',
+            'bower.json',
+            '.jshintrc'
+          ]
+        }]
+      }
     }
   });
 
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  //--------------------------------------------------------------------------
+  //
+  // Custom stuff
+  //
+  //--------------------------------------------------------------------------
+
+  grunt.registerTask('gitignore',
+    'Writes .gitignore files for both grunt-init-carnaby and grunt-carnaby',
+    function () {
+    function write(filepath, list) {
+      grunt.file.write(filepath, list.join('\n'));
+    }
+    write('grunt-init-carnaby/root/.gitignore', gitignore);
+    write('grunt-carnaby/.gitignore', carnaby_gitignore);
+    grunt.log.ok();
+  });
+
+  //--------------------------------------------------------------------------
+  //
+  // Alises
+  //
+  //--------------------------------------------------------------------------
 
   grunt.registerTask('install', [
     'clean:install',
@@ -245,6 +323,12 @@ module.exports = function(grunt) {
     'shell:gp_grunt_init_carnaby'
   ]);
 
-  grunt.registerTask('default', ['jshint']);
-  grunt.registerTask('start', ['default', 'watch']);
+  grunt.registerTask('default', [
+    'extend:devDependencies',
+    'copy:oddBits',
+    'jshint',
+    'gitignore'
+  ]);
+
+  grunt.registerTask('start', ['jshint', 'watch']);
 };
