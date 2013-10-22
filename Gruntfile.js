@@ -22,6 +22,8 @@ module.exports = function(grunt) {
     'node_modules',
     'targets',
     'tmp',
+    'css',
+    'images/generated'
   ];
 
   var carnaby_gitignore = gitignore.concat([
