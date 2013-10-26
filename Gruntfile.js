@@ -161,26 +161,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
 
-    extend: {
-
-    //   //----------------------------------
-    //   //
-    //   // let grunt-carnaby itself determine
-    //   // grunt-init-carnaby dependencies.
-    //   //
-    //   //----------------------------------
-
-    //   devDependencies: {
-    //     options: {
-    //       defaults: _.extend(carnabypkg.devDependencies, {
-    //         'grunt-carnaby': '~' + carnabypkg.version
-    //       })
-    //     },
-    //     files: {
-    //       'grunt-init-carnaby/dev-dependencies.json': []
-    //     }
-    //   }
-    },
+    extend: {},
 
     shell: {
 

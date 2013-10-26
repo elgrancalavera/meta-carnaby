@@ -29,6 +29,6 @@ if [[ $install ]]; then
   cd test
   grunt carnaby:new-project
   grunt
-  grunt carnaby:start
+  grunt start
 
 fi
