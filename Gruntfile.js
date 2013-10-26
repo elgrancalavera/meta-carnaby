@@ -10,7 +10,7 @@ module.exports = function(grunt) {
   //--------------------------------------------------------------------------
 
   var _ = grunt.util._;
-  var carnabypkg = grunt.file.readJSON('grunt-carnaby/package.json');
+  // var carnabypkg = grunt.file.readJSON('grunt-carnaby/package.json');
   var gitignore = [
     '.DS_Store',
     '.preflight',
@@ -110,6 +110,51 @@ module.exports = function(grunt) {
 
   //--------------------------------------------------------------------------
   //
+  // Custom tasks
+  //
+  //--------------------------------------------------------------------------
+
+  grunt.registerTask('extend-init',
+  'Updates grunt-init-carnaby with data from grunt-carnaby',
+  function () {
+    var pkg;
+    try {
+      pkg = grunt.file.readJSON('grunt-carnaby/package.json');
+    } catch (e) {
+      grunt.fatal(
+        'Could not update "grunt-init-carnaby" because "grunt-carnaby/package.json"\n' +
+        'was not found.\n'  +
+        'Did you forget to run "grunt install"?\n' +
+        e.message
+      );
+    }
+
+    grunt.config('extend', {
+      'node-dependencies': {
+        options: {
+          defaults: _.extend(
+            pkg.devDependencies, {
+              'grunt-carnaby': '~' + pkg.version
+            })
+        },
+        files: {
+          'grunt-init-carnaby/dev-dependencies.json': []
+        }
+      },
+      'bower-dependencies': {
+        files: {
+          'grunt-init-carnaby/root/bower.json': [
+            'grunt-carnaby/bower.json',
+            'bower-init-carnaby.json',
+          ]
+        }
+      }
+    });
+    grunt.task.run(['extend']);
+  });
+
+  //--------------------------------------------------------------------------
+  //
   // Grunt
   //
   //--------------------------------------------------------------------------
@@ -118,23 +163,23 @@ module.exports = function(grunt) {
 
     extend: {
 
-      //----------------------------------
-      //
-      // let grunt-carnaby itself determine
-      // grunt-init-carnaby dependencies.
-      //
-      //----------------------------------
+    //   //----------------------------------
+    //   //
+    //   // let grunt-carnaby itself determine
+    //   // grunt-init-carnaby dependencies.
+    //   //
+    //   //----------------------------------
 
-      devDependencies: {
-        options: {
-          defaults: _.extend(carnabypkg.devDependencies, {
-            'grunt-carnaby': '~' + carnabypkg.version
-          })
-        },
-        files: {
-          'grunt-init-carnaby/dev-dependencies.json': []
-        }
-      }
+    //   devDependencies: {
+    //     options: {
+    //       defaults: _.extend(carnabypkg.devDependencies, {
+    //         'grunt-carnaby': '~' + carnabypkg.version
+    //       })
+    //     },
+    //     files: {
+    //       'grunt-init-carnaby/dev-dependencies.json': []
+    //     }
+    //   }
     },
 
     shell: {
@@ -208,7 +253,7 @@ module.exports = function(grunt) {
         ].join(cmdjoint)
       },
 
-      install_grunt_init_carnaby: {
+      install_init_carnaby: {
         options: grunt_init_carnaby_shellOpts(),
         command: [
           'npm install',
@@ -254,7 +299,6 @@ module.exports = function(grunt) {
           dest: 'grunt-init-carnaby/root',
           src: [
             '.bowerrc',
-            'bower.json',
             '.jshintrc'
           ]
         }]
@@ -285,6 +329,9 @@ module.exports = function(grunt) {
   //
   //--------------------------------------------------------------------------
 
+  // It would nice to warn before installing again... I've deleted my own work
+  // a couple of times now by testing the install task :P
+
   grunt.registerTask('install', [
     'clean:install',
     'shell:install_rm',
@@ -292,7 +339,8 @@ module.exports = function(grunt) {
     'shell:install_mkdir',
     'shell:install_ln',
     'shell:install_carnaby',
-    'shell:install_grunt_init_carnaby'
+    'shell:install_init_carnaby',
+    'default',
   ]);
 
   grunt.registerTask('gst', [
@@ -326,7 +374,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'extend:devDependencies',
+    'extend-init',
     'copy:oddBits',
     'jshint',
     'gitignore'
